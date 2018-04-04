@@ -3,22 +3,12 @@ package com.rares.syneco.converter;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
 
-@RestController
+@Component
 public class SynConverter {
-
-	@RequestMapping(value = "/convert", method = RequestMethod.GET)
-	public String respondToInput(@RequestParam(name="input", defaultValue = "", required=true) String input) {
-		//verify input
-		//convert to appropriate output
-		return convert(input); //convert(input)
-	}
 	
-	private String convert(String reqInput) {
+	public String convert(String reqInput) {
 		if(!verifyInput(reqInput)) {
 			return "Invalid Input!"; //or throw exceptions
 		}
@@ -31,13 +21,13 @@ public class SynConverter {
 		
 		DateTime tempDate;
 		StringBuilder res = new StringBuilder();
-		if(reqInput.startsWith("Q") ) {
+		if(reqInput.startsWith("Q-") ) {
 			tempDate = quarterFormatter.parseDateTime(getRelevantInput(reqInput));
 			res.append("Q");
 			res.append(tempDate.getMonthOfYear());
 			res.append('-');
 			res.append(quarterOutFormatter.print(tempDate));
-		} else if(reqInput.startsWith("SWS")) {
+		} else if(reqInput.startsWith("SWS-")) {
 			tempDate = seasonMonthFormatter.parseDateTime(getRelevantInput(reqInput));
 			res.append(getSeasonFromMonth(tempDate.getMonthOfYear()));
 			res.append('-');
@@ -46,7 +36,7 @@ public class SynConverter {
 				res.append('/');
 				res.append(tempDate.getYearOfCentury() + 1);
 			} 
-		} else if(reqInput.startsWith("M")) {
+		} else if(reqInput.startsWith("M-")) {
 			tempDate = seasonMonthFormatter.parseDateTime(getRelevantInput(reqInput));
 			res.append(monthOutFormatter.print(tempDate));
 		}
@@ -55,7 +45,7 @@ public class SynConverter {
 			if(yearFormatter.print(year).equals(reqInput)) {
 				res.append(yearFormatter.print(year));
 			} else {
-				res.append("Incorrect input");
+				res.append("Invalid Input!");
 			}
 		} 
 		return res.toString();
