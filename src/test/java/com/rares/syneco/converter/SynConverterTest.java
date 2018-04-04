@@ -4,15 +4,30 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+
+import com.rares.syneco.SynecoApplication;
 
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = WebEnvironment.MOCK)
 @RunWith(SpringRunner.class)
 public class SynConverterTest {
+	
+	@Autowired
+	@Mock
+	SynecoApplication app;
+	
+	  @Autowired
+	  private MockMvc mvc;
+		
+	  @Autowired
+		private TestRestTemplate testRestTemplate;
 
 	@Autowired
 	private SynConverter converter;
@@ -38,7 +53,7 @@ public class SynConverterTest {
 	public void converterTestSeasons() {
 		assertThat(converter.respondToInput("SWS-2018-04")).isEqualTo("Sum-18");
 		assertThat(converter.respondToInput("SWS-2018-10")).isEqualTo("Win-18/19");
-		assertThat(converter.respondToInput("SWS-2019-04")).isEqualTo("Sum-19");
+		assertThat(converter.respondToInput("M-2018-05")).isEqualTo("May-2018");
 		assertThat(converter.respondToInput("SWS-2019-10")).isEqualTo("Win-19/20");
 	}
 	
@@ -49,4 +64,21 @@ public class SynConverterTest {
 		assertThat(converter.respondToInput("M-2018-04")).isEqualTo("Apr-2018");
 		assertThat(converter.respondToInput("M-2018-05")).isEqualTo("May-2018");
 	}
+	
+//	public void negativeTests() {
+//		assertThat(converter.respondToInput("M-2018-05")).isEqualTo("May-2018");
+//		assertThat(converter.respondToInput("M-2018-05")).isEqualTo("May-2018");
+//		assertThat(converter.respondToInput("Q-2018-4")).isEqualTo("Q4-18");
+//		assertThat(converter.respondToInput("2019")).isEqualTo("2019");
+//	}
+//	
+//	@Test
+//	public void intTest() {
+//		MockHttpServletResponse response = mvc.perform(RequestBuilderget("/convert/?=SWS-2018-10").accept(MediaType.APPLICATION_JSON))
+//                .andReturn().getResponse();
+//		
+//
+//		then(entity.getStatusCode()).isEqualTo(HttpStatus.OK);
+//
+//	}
 }

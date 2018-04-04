@@ -4,13 +4,14 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class SynConverter {
 
-	@RequestMapping("/convert")
+	@RequestMapping(value = "/convert", method = RequestMethod.GET)
 	public String respondToInput(@RequestParam(name="input", defaultValue = "", required=true) String input) {
 		//verify input
 		//convert to appropriate output
@@ -18,7 +19,9 @@ public class SynConverter {
 	}
 	
 	private String convert(String reqInput) {
-		
+		if(!verifyInput(reqInput)) {
+			return "Invalid Input!"; //or throw exceptions
+		}
 		DateTimeFormatter yearFormatter = DateTimeFormat.forPattern("yyyy");
 		DateTimeFormatter quarterFormatter = DateTimeFormat.forPattern("yyyy-M");
 		DateTimeFormatter seasonMonthFormatter = DateTimeFormat.forPattern("yyyy-MM");
@@ -64,5 +67,13 @@ public class SynConverter {
 	
 	private String getSeasonFromMonth(int month) {
 		return month > 2 && month <9 ? "Sum" : "Win";
+	}
+	
+	private boolean verifyInput(String reqInput) {
+		if(reqInput.length() < 4 || reqInput.length() > 11) {
+			return false;
+		}
+		return true;
+			
 	}
 }
